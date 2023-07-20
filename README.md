@@ -18,5 +18,5 @@ um Projeto com Bancos de Dados, Testes e Deploy.
 - isort (ordenador de imports)
 
 ## Referências
-[Link do curso]("https://fastapidozero.dunossauro.com/01/")
-[Link do Canal do Eduarno Mendes]("https://www.youtube.com/@Dunossauro")
+[Link do curso](https://fastapidozero.dunossauro.com/01/)
+[Link do Canal do Eduarno Mendes](https://www.youtube.com/@Dunossauro)
