@@ -14,3 +14,6 @@ class User(Base):
     username: Mapped[str]
     email: Mapped[str]
     password: Mapped[str]
+
+    def __repr__(self):
+        return f'User(username={self.username!r}, email={self.email!r})'

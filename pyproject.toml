@@ -21,9 +21,11 @@ pytest = "^7.4.0"
 pytest-cov = "^4.1.0"
 taskipy = "^1.11.0"
 blue = "^0.9.1"
-isort = "^5.12.0"
 ruff = "^0.0.278"
 httpx = "^0.24.1"
+isort = "^5.12.0"
+ipdb = "^0.13.13"
+rich = "^13.4.2"
 
 [tool.ruff]
 line-length = 79
@@ -34,7 +36,7 @@ exclude = [
 ]
 
 [tool.isort]
-profile = "back"
+profile = "black"
 line-length = 79
 
 [tool.pytest.ini_options]
