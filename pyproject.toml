@@ -11,6 +11,9 @@ python = "^3.11"
 fastapi = "^0.100.0"
 uvicorn = "^0.23.1"
 email-validator = "^2.0.0.post2"
+sqlalchemy = "^2.0.19"
+pydantic-settings = "^2.0.2"
+alembic = "^1.11.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -45,6 +48,7 @@ lint = 'ruff . && blue --check . --diff'
 format = 'blue . && isort .'
 run = 'uvicorn fast_zero.app:app --reload'
 clean = 'find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf'
+alembic = 'alembic upgrade head'
 pre_test = 'task lint && task clean'
 test = 'pytest -s -x --cov=fast_zero -vv'
 post_test = 'coverage html'

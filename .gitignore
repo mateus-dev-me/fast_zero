@@ -1,7 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
-NOTES.md
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -177,4 +176,5 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Generated using ignr.py - github.com/Antrikshy/ignr.py
-
+*.db
+NOTES.md

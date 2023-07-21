@@ -11,6 +11,7 @@ um Projeto com Bancos de Dados, Testes e Deploy.
 - FastAPI (framework web)
 - Pydantic (validator de dados)
 - SQLAlchemy (ORM)
+- Alembic (Migrations)
 - Taskipy (automatização de comandos)
 - Pytest (framework de tests)
 - Ruff (linter)
