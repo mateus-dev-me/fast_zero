@@ -1,4 +1,5 @@
 from fast_zero.schemas import UserPublic
+from fast_zero.security import create_access_token
 
 
 def test_root_dev_retornar_200_e_ola_mundo(client):
@@ -31,9 +32,10 @@ def test_read_users(client):
     assert response.json() == {'users': []}
 
 
-def test_update_user(client, user):
+def test_update_user(client, user, token):
     response = client.put(
         f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'matheus',
             'email': 'matheus@example.com',
@@ -48,8 +50,10 @@ def test_update_user(client, user):
     }
 
 
-def test_delete_user(client, user):
-    response = client.delete(f'/users/{user.id}')
+def test_delete_user(client, user, token):
+    response = client.delete(
+        f'/users/{user.id}', headers={'Authorization': f'Bearer {token}'}
+    )
     assert response.status_code == 200
     assert response.json() == {'detail': 'User deleted'}
 
@@ -73,7 +77,40 @@ def test_create_existing_user(client, user):
     assert response.json() == {'detail': 'Username already registed'}
 
 
-def test_update_user_not_exist(client):
+def test_get_token(client, user):
+    response = client.post(
+        '/token',
+        data={'username': user.email, 'password': user.clean_password},
+    )
+
+    token = response.json()
+    assert response.status_code == 200
+    assert 'access_token' in token
+    assert 'type_token' in token
+
+
+def test_get_token_with_incorrect_username(client, user):
+    response = client.post(
+        '/token',
+        data={
+            'username': 'incorrectusername',
+            'password': user.clean_password,
+        },
+    )
+    assert response.status_code == 400
+    assert response.json() == {'detail': 'Incorrect email or password'}
+
+
+def test_get_token_with_incorrect_password(client, user):
+    response = client.post(
+        '/token',
+        data={'username': user.email, 'password': 'incorrectpassword'},
+    )
+    assert response.status_code == 400
+    assert response.json() == {'detail': 'Incorrect email or password'}
+
+
+def test_unauthorized_update_user(client):
     response = client.put(
         '/users/1',
         json={
@@ -82,11 +119,38 @@ def test_update_user_not_exist(client):
             'password': 'teste',
         },
     )
-    assert response.status_code == 404
-    assert response.json() == {'detail': 'User not found'}
+    assert response.status_code == 401
+    assert response.json() == {
+        'detail': 'Not authenticated',
+    }
 
 
-def test_delete_user_not_exit(client):
+def test_unauthorized_delete_user(client):
     response = client.delete('/users/1')
-    assert response.status_code == 404
-    assert response.json() == {'detail': 'User not found'}
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'Not authenticated'}
+
+
+def test_update_user_with_invalid_token(client):
+    token = create_access_token({'sub': 'teste@test.com'})
+    response = client.put(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'username': 'teste',
+            'email': 'teste@test.com',
+            'password': 'teste',
+        },
+    )
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'Could not validate credentials'}
+
+
+def test_delete_user_with_invalid_token(client):
+    token = create_access_token({'sub': 'teste@test.com'})
+    response = client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'},
+    )
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'Could not validate credentials'}
