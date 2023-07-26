@@ -17,8 +17,6 @@ alembic = "^1.11.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-multipart = "^0.0.6"
-factory-boy = "^3.3.0"
-faker = "^19.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -31,6 +29,9 @@ httpx = "^0.24.1"
 isort = "^5.12.0"
 ipdb = "^0.13.13"
 rich = "^13.4.2"
+factory-boy = "^3.3.0"
+faker = "^19.2.0"
+freezegun = "^1.2.2"
 
 [tool.ruff]
 line-length = 79

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWSError, jwt
+from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -16,9 +16,6 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 def create_access_token(data: dict):
-    """
-    Genereate Access Token.
-    """
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRES_MINUTES
@@ -59,13 +56,14 @@ async def get_current_user(
         if not username:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except JWSError:
+    except JWTError:
         raise credentials_exception
 
     user = session.scalar(
         select(User).where(User.email == token_data.username)
     )
 
-    if not user:
+    if user is None:
         raise credentials_exception
+
     return user
