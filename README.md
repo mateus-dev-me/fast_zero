@@ -36,8 +36,9 @@ fast_zero
 - isort (ordenador de imports)
 
 ## SWAGGER UI
-![Screenshot Swagger UI](docs/fast_zero-Swagger-UI-1.png)
 ![Screenshot Swagger UI](docs/fast_zero-Swagger-UI-2.png)
+![Screenshot Swagger UI](docs/fast_zero-Swagger-UI-1.png)
+
 
 ## Covarage Report
 ![Screenshot Covarage](docs/Coverage-report.png)
