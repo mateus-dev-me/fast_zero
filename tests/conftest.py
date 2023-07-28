@@ -8,7 +8,7 @@ from fast_zero.app import app
 from fast_zero.database import get_session
 from fast_zero.models import Base
 from fast_zero.security import get_password_hash
-from tests.factories import UserFactory
+from tests.factories import TodoFactory, UserFactory
 
 
 @pytest.fixture
@@ -63,6 +63,16 @@ def user_factory(session):
     user.clean_password = 'mypassword'
 
     return user
+
+
+@pytest.fixture
+def todo(session, user):
+    todo = TodoFactory(user_id=user.id)
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+
+    return todo
 
 
 @pytest.fixture
