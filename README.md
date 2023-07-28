@@ -40,32 +40,32 @@ fast_zero
 ![Screenshot Swagger UI](docs/fast_zero-Swagger-UI-2.png)
 
 ## Covarage Report
-![Screenshot Covarage](docs/Covarage-report.png)
+![Screenshot Covarage](docs/Coverage-report.png)
 
 
 ## Rodando o Projeto
 Instalando dependências.
 
 ```
-
 poetry install
-
 ```
 
 Ativando o ambiente virtual
 
 ```
-
 poetry shell
+```
 
+Rodando migrações
+
+```
+alembic upgrade head
 ```
 
 Rodando a aplicação
 
 ```
-
 task run
-
 ```
 
 
