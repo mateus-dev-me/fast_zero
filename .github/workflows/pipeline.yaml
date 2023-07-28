@@ -8,6 +8,13 @@ jobs:
     steps:
       - name: Copia os arquivos do repo
         uses: actions/checkout@v3
+        
+      - name: Configurar variáveis de ambiente
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" >> $GITHUB_ENV
+          echo "SECRET_KEY=$SECRET_KEY" >> $GITHUB_ENV
+          echo "ALGORITHM=$ALGORITHM" >> $GITHUB_ENV
+          echo "ACCESS_TOKEN_EXPIRES_MINUTES=$ACCESS_TOKEN_EXPIRES_MINUTES" >> $GITHUB_ENV
 
       - name: Instalar o python
         uses: actions/setup-python@v4
