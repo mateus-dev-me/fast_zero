@@ -46,7 +46,7 @@ omit = [
 
 [tool.taskipy.tasks]
 lint = 'ruff check'
-pre_format = 'ruff check --fix'
+pre_fmt = 'ruff check --fix'
 fmt = 'ruff format'
 run = 'fastapi dev app/main.py'
 pre_test = 'task lint'
