@@ -58,7 +58,7 @@ def list_users(session: Session, filter_users: Annotated[FilterPage, Query()]):
     return {'users': users}
 
 
-@router.get('/{user_id}', response_model=UserPublic)
+@router.get('/{user_id:int}', response_model=UserPublic)
 def detail_user(user_id: int, current_user: CurrentUser):
     if current_user.id != user_id:
         raise HTTPException(
@@ -68,7 +68,7 @@ def detail_user(user_id: int, current_user: CurrentUser):
     return current_user
 
 
-@router.put('/{user_id}', response_model=UserPublic)
+@router.put('/{user_id:int}', response_model=UserPublic)
 def update_user(
     user_id: int, user: UserSchema, session: Session, current_user: CurrentUser
 ):

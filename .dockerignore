@@ -1,0 +1,17 @@
+# Ignorar arquivos e diretórios do sistema
+.DS_Store
+Thumbs.db
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+.venv/
+.vscode/
+.idea/
+.git/
+.gitignore
+htmlcov/
+.coverage
+.ruff_cache/
+.python-version

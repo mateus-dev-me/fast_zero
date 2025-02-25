@@ -63,7 +63,7 @@ def list_tasks(
     return {'tasks': tasks}
 
 
-@router.patch('/{task_id}', response_model=TaskPublic)
+@router.patch('/{task_id:int}', response_model=TaskPublic)
 def update_task(
     task_id, task: TaskUpdate, session: Session, user: CurrentUser
 ):
@@ -85,7 +85,7 @@ def update_task(
     return db_task
 
 
-@router.delete('/{task_id}', response_model=Message)
+@router.delete('/{task_id:int}', response_model=Message)
 def delete_task(task_id, session: Session, user: CurrentUser):
     db_task = session.scalar(
         select(Task).where(Task.id == task_id, Task.user_id == user.id)
