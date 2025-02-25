@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from app.models import TaskState
@@ -42,6 +44,8 @@ class TaskSchema(BaseModel):
 
 class TaskPublic(TaskSchema):
     id: int
+    created_at: datetime
+    updated_at: datetime
 
 
 class TaskList(BaseModel):

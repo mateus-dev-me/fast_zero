@@ -28,7 +28,7 @@ def test_create_user_model(session, mock_db_time):
     }
 
 
-def test_create_task(session, user: User):
+def test_create_task_model(session, user: User):
     task = Task(
         title='test',
         description='testtest',

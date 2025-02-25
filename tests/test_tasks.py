@@ -1,21 +1,28 @@
 from http import HTTPStatus
 
-from app.models import TaskState
+from app.models import Task, TaskState
 from tests.factory import TaskFactory
 
 
-def test_create_task(client, user, token):
-    response = client.post(
-        '/tasks',
-        headers={'Authorization': f'Bearer {token}'},
-        json={'title': 'test', 'description': 'testtest', 'state': 'draft'},
-    )
+def test_create_task(client, user, token, mock_db_time):
+    with mock_db_time(model=Task) as time:
+        response = client.post(
+            '/tasks',
+            headers={'Authorization': f'Bearer {token}'},
+            json={
+                'title': 'test',
+                'description': 'testtest',
+                'state': 'draft',
+            },
+        )
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
         'id': 1,
         'title': 'test',
         'description': 'testtest',
         'state': 'draft',
+        'created_at': time.isoformat(),
+        'updated_at': time.isoformat(),
     }
 
 
@@ -128,6 +135,32 @@ def test_list_tasks_filter_combined_should_return_5_todos(
     )
 
     assert len(response.json()['tasks']) == expected
+
+
+def test_list_task_should_return_all_expected_fields(
+    client, session, user, token, mock_db_time
+):
+    with mock_db_time(model=Task) as time:
+        new_task = TaskFactory(user_id=user.id)
+        session.add(new_task)
+        session.commit()
+
+        response = client.get(
+            '/tasks',
+            headers={'Authorization': f'Bearer {token}'},
+        )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['tasks'] == [
+        {
+            'id': 1,
+            'title': new_task.title,
+            'description': new_task.description,
+            'state': new_task.state,
+            'created_at': time.isoformat(),
+            'updated_at': time.isoformat(),
+        },
+    ]
 
 
 def test_task_update_error(client, token):
