@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 from datetime import datetime
 
-import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
@@ -10,17 +9,9 @@ from sqlalchemy.pool import StaticPool
 
 from app.database import get_session
 from app.main import api
-from app.models import User, table_registry
+from app.models import table_registry
 from app.security import get_password_hash
-
-
-class UserFactory(factory.Factory):
-    class Meta:
-        model = User
-
-    username = factory.Sequence(lambda n: f'test{n}')
-    email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
-    password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
+from tests.factory import TaskFactory, UserFactory
 
 
 @pytest.fixture
@@ -102,3 +93,12 @@ def token(client, user):
         data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']
+
+
+@pytest.fixture
+def task(session, user):
+    task = TaskFactory(user_id=user.id)
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+    return task

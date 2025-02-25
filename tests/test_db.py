@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 from sqlalchemy import select
 
-from app.models import User
+from app.models import Task, User
 
 
 def test_create_user_model(session, mock_db_time):
@@ -22,6 +22,21 @@ def test_create_user_model(session, mock_db_time):
         'username': 'alice',
         'email': 'test@mail.com',
         'password': '1234',
+        'tasks': [],
         'created_at': time,
         'updated_at': time,
     }
+
+
+def test_create_task(session, user: User):
+    task = Task(
+        title='test',
+        description='testtest',
+        state='draft',
+        user_id=user.id,
+    )
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+
+    assert task in user.tasks
