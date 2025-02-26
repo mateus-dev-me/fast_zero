@@ -20,8 +20,9 @@ jobs:
       - name: Instalar dependências
         run: poetry install
 
-      - name: Executar tests
-        run: potery run task test
+      - name: Executar testes
+        run: poetry run task test
+
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
