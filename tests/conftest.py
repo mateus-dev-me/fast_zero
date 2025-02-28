@@ -7,11 +7,18 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 from testcontainers.postgres import PostgresContainer
 
-from app.database import get_session
+from app.core.config import Settings
+from app.core.security import get_password_hash
+from app.database.models import table_registry
+from app.database.session import get_session
 from app.main import api
-from app.models import table_registry
-from app.security import get_password_hash
+from app.repositories.task_repository import TaskRepository
+from app.repositories.user_repository import UserRepository
+from app.services.task_service import TaskService
+from app.services.user_service import UserService
 from tests.factory import TaskFactory, UserFactory
+
+settings = Settings()
 
 
 @pytest.fixture
@@ -94,7 +101,7 @@ def other_user(session):
 @pytest.fixture
 def token(client, user):
     response = client.post(
-        '/auth/token',
+        f'{settings.BASE_URL}/auth/token',
         data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']
@@ -107,3 +114,23 @@ def task(session, user):
     session.commit()
     session.refresh(task)
     return task
+
+
+@pytest.fixture
+def user_repository(session):
+    return UserRepository(session)
+
+
+@pytest.fixture
+def task_repository(session):
+    return TaskRepository(session)
+
+
+@pytest.fixture
+def user_service(user_repository):
+    return UserService(user_repository)
+
+
+@pytest.fixture
+def task_service(task_repository):
+    return TaskService(task_repository)

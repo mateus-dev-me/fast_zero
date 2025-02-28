@@ -1,7 +1,7 @@
 import factory
 import factory.fuzzy
 
-from app.models import Task, TaskState, User
+from app.database.models import Task, TaskState, User
 
 
 class UserFactory(factory.Factory):

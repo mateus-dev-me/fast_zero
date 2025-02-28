@@ -1,9 +1,13 @@
 from http import HTTPStatus
 
+from app.core.config import Settings
+
+settings = Settings()
+
 
 def test_create_user(client):
     response = client.post(
-        '/users/',
+        f'{settings.BASE_URL}/users/',
         json={
             'username': 'test_username',
             'email': 'test@mail.com',
@@ -21,7 +25,7 @@ def test_create_user(client):
 
 def test_create_user_with_existing_username_should_fail(client, user):
     response = client.post(
-        '/users',
+        f'{settings.BASE_URL}/users',
         json={
             'username': user.username,
             'email': 'mateus@mail.com',
@@ -35,7 +39,7 @@ def test_create_user_with_existing_username_should_fail(client, user):
 
 def test_create_user_with_existing_email_should_fail(client, user):
     response = client.post(
-        '/users',
+        f'{settings.BASE_URL}/users',
         json={
             'username': 'mateus',
             'email': user.email,
@@ -47,14 +51,11 @@ def test_create_user_with_existing_email_should_fail(client, user):
     assert response.json() == {'detail': 'Email already exists'}
 
 
-def test_list_users(client):
-    response = client.get('/users/')
-    assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'users': []}
-
-
-def test_list_users_with_users(client, user):
-    response = client.get('/users/')
+def test_list_users_with_users(client, user, token):
+    response = client.get(
+        f'{settings.BASE_URL}/users/',
+        headers={'Authorization': f'Bearer {token}'},
+    )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'users': [{'id': 1, 'username': user.username, 'email': user.email}]
@@ -63,7 +64,8 @@ def test_list_users_with_users(client, user):
 
 def test_detail_user(client, user, token):
     response = client.get(
-        '/users/1', headers={'Authorization': f'Bearer {token}'}
+        f'{settings.BASE_URL}/users/1',
+        headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
@@ -75,7 +77,8 @@ def test_detail_user(client, user, token):
 
 def test_detail_user_with_wrong_user(client, other_user, token):
     response = client.get(
-        f'/users/{other_user.id}', headers={'Authorization': f'Bearer {token}'}
+        f'{settings.BASE_URL}/users/{other_user.id}',
+        headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permissions'}
@@ -83,7 +86,7 @@ def test_detail_user_with_wrong_user(client, other_user, token):
 
 def test_update_user(client, user, token):
     response = client.put(
-        '/users/1',
+        f'{settings.BASE_URL}/users/1',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'test2_username',
@@ -101,7 +104,7 @@ def test_update_user(client, user, token):
 
 def test_update_user_should_return_forbidden(client, token):
     response = client.put(
-        '/users/2',
+        f'{settings.BASE_URL}/users/2',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'test2_username',
@@ -115,7 +118,7 @@ def test_update_user_should_return_forbidden(client, token):
 
 def test_update_integrity_error(client, user, token):
     client.post(
-        '/users',
+        f'{settings.BASE_URL}/users',
         json={
             'username': 'fausto',
             'email': 'fausto@mail.com',
@@ -124,7 +127,7 @@ def test_update_integrity_error(client, user, token):
     )
 
     response = client.put(
-        '/users/1',
+        f'{settings.BASE_URL}/users/1',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'fausto',
@@ -138,7 +141,7 @@ def test_update_integrity_error(client, user, token):
 
 def test_update_user_with_wrong_user(client, other_user, token):
     response = client.put(
-        f'/users/{other_user.id}',
+        f'{settings.BASE_URL}/users/{other_user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'fausto',
@@ -152,7 +155,7 @@ def test_update_user_with_wrong_user(client, other_user, token):
 
 def test_delete_user(client, user, token):
     response = client.delete(
-        '/users/1',
+        f'{settings.BASE_URL}/users/1',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.OK
@@ -160,14 +163,15 @@ def test_delete_user(client, user, token):
 
 
 def test_delete_user_should_return_unauthorized(client):
-    response = client.delete('/users/2')
+    response = client.delete(f'{settings.BASE_URL}/users/2')
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {'detail': 'Not authenticated'}
 
 
 def test_delete_user_with_wrong_user(client, other_user, token):
     response = client.delete(
-        f'/users/{other_user.id}', headers={'Authorization': f'Bearer {token}'}
+        f'{settings.BASE_URL}/users/{other_user.id}',
+        headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permissions'}

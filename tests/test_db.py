@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 from sqlalchemy import select
 
-from app.models import Task, User
+from app.database.models import Task, User
 
 
 def test_create_user_model(session, mock_db_time):

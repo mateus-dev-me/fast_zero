@@ -1,13 +1,16 @@
 from http import HTTPStatus
 
-from app.models import Task, TaskState
+from app.core.config import Settings
+from app.database.models import Task, TaskState
 from tests.factory import TaskFactory
+
+settings = Settings()
 
 
 def test_create_task(client, user, token, mock_db_time):
     with mock_db_time(model=Task) as time:
         response = client.post(
-            '/tasks',
+            f'{settings.BASE_URL}/tasks',
             headers={'Authorization': f'Bearer {token}'},
             json={
                 'title': 'test',
@@ -32,7 +35,7 @@ def test_list_tasks_should_return_5_tasks(session, client, user, token):
     session.commit()
 
     response = client.get(
-        '/tasks',
+        f'{settings.BASE_URL}/tasks',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert len(response.json()['tasks']) == expected
@@ -46,7 +49,7 @@ def test_list_tasks_pagination_should_return_2_tasks(
     session.commit()
 
     response = client.get(
-        '/tasks/?offset=1&limit=2',
+        f'{settings.BASE_URL}/tasks/?offset=1&limit=2',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert len(response.json()['tasks']) == expected
@@ -62,7 +65,7 @@ def test_list_task_filter_title_should_return_5_tasks(
     session.commit()
 
     response = client.get(
-        '/tasks/?title=Test todo 1',
+        f'{settings.BASE_URL}/tasks/?title=Test todo 1',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -81,7 +84,7 @@ def test_list_tasks_filter_description_should_return_2_tasks(
     session.commit()
 
     response = client.get(
-        '/tasks/?description=testdescription',
+        f'{settings.BASE_URL}/tasks/?description=testdescription',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert len(response.json()['tasks']) == expected
@@ -97,7 +100,7 @@ def test_list_tasks_filter_state_should_return_5_tasks(
     session.commit()
 
     response = client.get(
-        '/tasks/?state=draft',
+        f'{settings.BASE_URL}/tasks/?state=draft',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -129,8 +132,9 @@ def test_list_tasks_filter_combined_should_return_5_todos(
     )
     session.commit()
 
+    url_query = '?title=Test todo combined&description=combined&state=done'
     response = client.get(
-        '/tasks/?title=Test todo combined&description=combined&state=done',
+        f'{settings.BASE_URL}/tasks/{url_query}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -146,7 +150,7 @@ def test_list_task_should_return_all_expected_fields(
         session.commit()
 
         response = client.get(
-            '/tasks',
+            f'{settings.BASE_URL}/tasks',
             headers={'Authorization': f'Bearer {token}'},
         )
 
@@ -165,7 +169,7 @@ def test_list_task_should_return_all_expected_fields(
 
 def test_task_update_error(client, token):
     response = client.patch(
-        '/tasks/10',
+        f'{settings.BASE_URL}/tasks/10',
         headers={'Authorization': f'Bearer {token}'},
         json={'title': 'testtask'},
     )
@@ -179,7 +183,7 @@ def test_task_update(client, session, user, token):
     session.commit()
 
     response = client.patch(
-        f'/tasks/{task.id}',
+        f'{settings.BASE_URL}/tasks/{task.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={'title': 'testtask'},
     )
@@ -192,7 +196,8 @@ def test_delete_task(client, session, user, token):
     session.add(task)
     session.commit()
     response = client.delete(
-        f'/tasks/{task.id}', headers={'Authorization': f'Bearer {token}'}
+        f'{settings.BASE_URL}/tasks/{task.id}',
+        headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
@@ -202,7 +207,8 @@ def test_delete_task(client, session, user, token):
 
 def test_delete_task_error(client, token):
     response = client.delete(
-        '/tasks/10', headers={'Authorization': f'Bearer {token}'}
+        f'{settings.BASE_URL}/tasks/10',
+        headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'Task not found'}

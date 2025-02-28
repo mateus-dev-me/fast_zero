@@ -9,15 +9,17 @@ from pwdlib import PasswordHash
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database import get_session
-from app.models import User
-from app.settings import Settings
+from app.core.config import Settings
+from app.database.models import User
+from app.database.session import get_session
 
 settings = Settings()
 
 pwd_context = PasswordHash.recommended()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f'{settings.BASE_URL}/auth/token'
+)
 
 
 def create_access_token(data: dict):

@@ -1,5 +1,5 @@
 [project]
-name = "fast-zero"
+name = "task-manager-fastapi"
 version = "0.1.0"
 description = ""
 authors = [
@@ -30,6 +30,7 @@ factory-boy = "^3.3.3"
 freezegun = "^1.5.1"
 testcontainers = "^4.9.1"
 ruff = "^0.9.7"
+ipdb = "^0.13.13"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
